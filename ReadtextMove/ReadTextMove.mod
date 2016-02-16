@@ -43,15 +43,16 @@ MODULE ReadTextMove
     !vertical for paint can, etc.
     VAR orient paintStrokeQuat:=[0.7071067811,0,0.7071067811,0];
     !will change according to paintstroke vector.
-    PERS num SF:=4.0;
-    PERS num brushLength:=240;
-    PERS num XOffset:=250;
+    PERS num SF:=0.5;
+    PERS num brushLength:=200;
+    PERS num XOffset:=200;
+    PERS num YOffset:=-150;
     PERS tooldata paintBrush:=[TRUE,[[87,0,146],[1,0,0,0]],[0.2,[0,0,146],[0,0,1,0],0,0,0]];
 
     PROC main()
         overBlue:=[[314+brushLength,-216,paintHeight+50],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
         blue:=[[314+brushLength,-216,paintHeight],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
-        Open "HOME:/dataPoints.txt",pointsFile\Read;
+        Open "HOME:/DickbuttTesttext.txt",pointsFile\Read;
         distanceTravelled:=0;
         readCoords;
         GotoPaint(STRColor);
@@ -79,7 +80,7 @@ MODULE ReadTextMove
             okX:=StrToVal(STRX,XTGT);
             okY:=StrToVal(STRY,YTGT);
             XTGT:=(SF*XTGT)+brushLength+XOffset;
-            YTGT:=SF*YTGT;
+            YTGT:=SF*YTGT+YOffset;
             CaseHit:=0;
 
         ELSEIF okX=FALSE THEN
@@ -92,7 +93,7 @@ MODULE ReadTextMove
             okY:=StrToVal(STRY,YTGT);
 
             XTGT:=(SF*XTGT)+brushLength+XOffset;
-            YTGT:=SF*YTGT;
+            YTGT:=SF*YTGT+YOffset;
             lastX:=XTGT;
             lastY:=YTGT;
             CaseHit:=1;
@@ -103,14 +104,14 @@ MODULE ReadTextMove
             STRY:=ReadStr(pointsFile\Delim:=",");
             okY:=StrToVal(STRY,YTGT);
             XTGT:=(SF*XTGT)+brushLength+XOffset;
-            YTGT:=SF*YTGT;
+            YTGT:=SF*YTGT+YOffset;
             CaseHit:=2;
 
         ENDIF
         !end of a file. 
         IF (NOT okX) AND (NOT okY) THEN
-            MoveL [[LastX,LastY,canvasHeight+30],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v1000,z0,paintBrush;
-            MoveL overBlue,v1000,fine,paintBrush;
+            MoveL [[LastX,LastY,canvasHeight+30],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
+            MoveL overBlue,v500,fine,paintBrush;
         ENDIF
     ENDPROC
 
@@ -137,21 +138,21 @@ MODULE ReadTextMove
         ConfL\Off;
         !over target
         MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
-        MoveL [[LastX,LastY,canvasHeight+30],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v1000,z0,paintBrush;
+        MoveL [[LastX,LastY,canvasHeight+30],ZeroZeroQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
         IF (colorToPaint="blue") THEN
             !over paint
-            MoveL overBlue,v1000,z0,paintBrush;
+            MoveL overBlue,v500,z0,paintBrush;
             !into paint
             MoveL blue,v100,fine,paintBrush;
             !over paint
-            MoveL overBlue,v1000,z0,paintBrush;
+            MoveL overBlue,v500,z0,paintBrush;
         ENDIF
         !over target
         IF (CaseHit=0) THEN
             lastX:=XTGT;
             lastY:=YTGT;
         ENDIF
-        MoveL [[LastX,LastY,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v1000,z0,paintBrush;
+        MoveL [[LastX,LastY,canvasHeight+20],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v500,z0,paintBrush;
         MoveL [[LastX,LastY,canvasHeight],paintStrokeQuat,[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]],v100,fine,paintBrush;
 
     ENDPROC
